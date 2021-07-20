@@ -14,7 +14,7 @@ goal_fitness=0.98
 pop_key = 0
 pop_size = 150
 pop_elitism = 2
-num_generations = 500
+num_generations = 5
 
 # Define task
 def xor(genomes):
@@ -37,7 +37,7 @@ pop = Population(pop_key,pop_size,pop_elitism)
 
 # Run population on the defined task for the specified number of generations
 #	and collect the winner
-winner_genome = pop.run(xor,goal_fitness,num_generations)
+winner_genome = pop.run(xor,goal_fitness,num_generations,report=True)
 
 # Decode winner genome into CPPN representation
 cppn = CPPN.create(winner_genome)
