@@ -37,7 +37,7 @@ pop = Population(pop_key,pop_size,pop_elitism)
 
 # Run population on the defined task for the specified number of generations
 #	and collect the winner
-winner_genome = pop.run(xor,goal_fitness,num_generations,report=True)
+winner_genome = pop.run(xor,goal_fitness,num_generations,report=True, plot_file="reports/fitness_plot.png")
 
 # Decode winner genome into CPPN representation
 cppn = CPPN.create(winner_genome)

@@ -12,8 +12,8 @@ import matplotlib.pyplot as plt
 
 xor_substrate = {
 	'in_dims': [1,2],
-	'o_dims': [1,3],
-	'sh_dims': 1
+	'sh_dims': [1,3],
+	'o_dims': 1
 }
 xor_inputs = [(0.0,0.0),(0.0,1.0),(1.0,0.0),(1.0,1.0)]
 xor_outputs = [0.0, 1.0, 1.0, 0.0]
@@ -87,9 +87,9 @@ def report_species(species_set, generation):
 			species_set.species[species].max_fitness,
 			len(species_set.species[species].members))
 
-def plot_fitness(x,y):
+def plot_fitness(x,y,filename):
 	plt.plot(x,y)
 	plt.ylabel("Fitness")
 	plt.xlabel("Generation")
 	plt.tight_layout()
-	plt.savefig("reports/fitness_plot.png")
+	plt.savefig(filename)
