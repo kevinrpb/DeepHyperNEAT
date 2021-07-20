@@ -16,16 +16,16 @@ sub_o_dims = 1
 xor_inputs = [(0.0,0.0),(0.0,1.0),(1.0,0.0),(1.0,1.0)]
 xor_outputs = [0.0, 1.0, 1.0, 0.0]
 
-def report_output(pop, inputs, outputs):
+def report_output(pop, X, Y):
 	'''
 	Reports the output of the current champion for the xor task.
 
 	pop -- population to be reported
 	'''
-	if inputs is None:
-		inputs = xor_inputs
-	if outputs is None:
-		outputs = xor_outputs
+	if X is None:
+		X = xor_inputs
+	if Y is None:
+		Y = xor_outputs
 
 	genome = pop.best_genome
 	cppn = CPPN.create(genome)
@@ -34,7 +34,7 @@ def report_output(pop, inputs, outputs):
 	print("\n=================================================")
 	print("\tChampion Output at Generation: {}".format(pop.current_gen))
 	print("=================================================")
-	for inputs, expected in zip(inputs, outputs):
+	for inputs, expected in zip(X, Y):
 		print("Input: {}\nExpected Output: {}".format(inputs,expected))
 		inputs = inputs + (1.0,)
 		actual_output = substrate.activate(inputs)[0]
