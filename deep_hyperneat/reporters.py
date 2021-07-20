@@ -10,13 +10,15 @@ from deep_hyperneat.decode import decode
 import seaborn
 import matplotlib.pyplot as plt
 
-sub_in_dims = [1,2]
-sub_sh_dims = [1,3]
-sub_o_dims = 1
+xor_substrate = {
+	'in_dims': [1,2],
+	'o_dims': [1,3],
+	'sh_dims': 1
+}
 xor_inputs = [(0.0,0.0),(0.0,1.0),(1.0,0.0),(1.0,1.0)]
 xor_outputs = [0.0, 1.0, 1.0, 0.0]
 
-def report_output(pop, X, Y):
+def report_output(pop, X=None, Y=None, substrate=None):
 	'''
 	Reports the output of the current champion for the xor task.
 
@@ -26,10 +28,12 @@ def report_output(pop, X, Y):
 		X = xor_inputs
 	if Y is None:
 		Y = xor_outputs
+	if substrate is None:
+		substrate = xor_substrate
 
 	genome = pop.best_genome
 	cppn = CPPN.create(genome)
-	substrate = decode(cppn,sub_in_dims,sub_o_dims,sub_sh_dims)
+	substrate = decode(cppn,substrate['in_dims'],substrate['o_dims'],substrate['sh_dims'])
 	sum_square_error = 0.0
 	print("\n=================================================")
 	print("\tChampion Output at Generation: {}".format(pop.current_gen))

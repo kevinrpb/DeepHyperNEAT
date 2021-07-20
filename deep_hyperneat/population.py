@@ -41,7 +41,7 @@ class Population():
 			# Assign values from state
 			self.population, self.reproduction = state
 
-	def run(self,task,goal,generations=None,report=False,X=None,Y=None):
+	def run(self,task,goal,generations=None,report=False,X=None,Y=None,substrate=None):
 		'''
 		Run evolution on a given task for a number of generations or until
 		a goal is reached.
@@ -93,7 +93,7 @@ class Population():
 			if report:
 				report_fitness(self)
 				report_species(self.species, self.current_gen)
-				report_output(self, X, Y)
+				report_output(self, X, Y, substrate)
 
 			best_fitnesses.append(self.best_genome.fitness)
 			max_complexity.append(self.max_complex_genome.complexity())
