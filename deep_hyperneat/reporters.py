@@ -87,10 +87,15 @@ def report_species(species_set, generation):
 			species_set.species[species].max_fitness,
 			len(species_set.species[species].members))
 
-def plot_fitness(x,y,filename):
+def plot_fitness(x,y,filename, plot_settings={}):
+	# Check used keys and set to none if not present
+	if 'ylim' not in plot_settings:
+		plot_settings['ylim'] = None
+
 	plt.plot(x,y)
 	plt.ylabel("Fitness")
 	plt.xlabel("Generation")
 	plt.tight_layout()
+	plt.ylim(plot_settings['ylim'])
 	plt.savefig(filename)
 	plt.clf()

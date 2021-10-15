@@ -41,7 +41,7 @@ class Population():
 			# Assign values from state
 			self.population, self.reproduction = state
 
-	def run(self,task,goal,generations=None,report=False,X=None,Y=None,substrate=None,plot_file=None):
+	def run(self,task,goal,generations=None,report=False,X=None,Y=None,substrate=None,plot_file=None,plot_settings={}):
 		'''
 		Run evolution on a given task for a number of generations or until
 		a goal is reached.
@@ -121,6 +121,6 @@ class Population():
 
 		if plot_file is not None:
 			generations = list(range(self.current_gen))
-			plot_fitness(generations, best_fitnesses, plot_file)
+			plot_fitness(generations, best_fitnesses, plot_file, plot_settings)
 
 		return self.best_genome
