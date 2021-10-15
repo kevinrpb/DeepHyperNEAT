@@ -93,3 +93,4 @@ def plot_fitness(x,y,filename):
 	plt.xlabel("Generation")
 	plt.tight_layout()
 	plt.savefig(filename)
+	plt.clf()
