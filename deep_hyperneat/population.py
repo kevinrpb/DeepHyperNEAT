@@ -63,12 +63,13 @@ class Population():
 			task(list(iteritems(self.population)))
 			# Find best genome in current generation and update avg fitness
 			curr_best = None
+			curr_avg_fitness = 0
 			curr_max_complex = None
 			curr_min_complex = None
 			avg_complexities = 0
 			for genome in itervalues(self.population):
 				avg_complexities += genome.complexity()
-				avg_fitnesses += genome.fitness
+				curr_avg_fitness += genome.fitness
 
 				# Update generation's most fit
 				if curr_best is None or genome.fitness > curr_best.fitness:
@@ -99,7 +100,7 @@ class Population():
 				report_output(self, X, Y, substrate)
 
 			best_fitnesses.append(self.best_genome.fitness)
-			avg_fitnesses.append((avg_fitnesses+0.0)/len(self.population))
+			avg_fitnesses.append((curr_avg_fitness+0.0)/len(self.population))
 			max_complexity.append(self.max_complex_genome.complexity())
 			min_complexity.append(self.min_complex_genome.complexity())
 			avg_complexity.append((avg_complexities+0.0)/len(self.population))
