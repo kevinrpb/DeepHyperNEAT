@@ -2,7 +2,7 @@ from deep_hyperneat.genome import Genome
 from deep_hyperneat.population import Population
 from deep_hyperneat.phenomes import FeedForwardCPPN as CPPN
 from deep_hyperneat.decode import decode
-from deep_hyperneat.visualize import draw_net
+from deep_hyperneat.visualize import draw_net, plot_fitness
 
 # Substrate parameters
 sub_in_dims = [1,2]
@@ -37,13 +37,19 @@ pop = Population(pop_key,pop_size,pop_elitism)
 
 # Run population on the defined task for the specified number of generations
 #	and collect the winner
-winner_genome = pop.run(xor,goal_fitness,num_generations,report=True, plot_file="reports/fitness_plot.png")
+results = pop.run(xor,goal_fitness,num_generations,report=True)
+
+winner_genome = results['best_gen']
 
 # Decode winner genome into CPPN representation
 cppn = CPPN.create(winner_genome)
 
 # Decode Substrate from CPPN
 substrate = decode(cppn,sub_in_dims,sub_o_dims,sub_sh_dims)
+
+# Plot fitness
+best_fitnesses = results['best_fit']
+plot_fitness(list(range(num_generations)), best_fitnesses, 'reports/fitness_plot.png')
 
 # Visualize networks of CPPN and Substrate. Files are saved in
 # 	reports/champion_images

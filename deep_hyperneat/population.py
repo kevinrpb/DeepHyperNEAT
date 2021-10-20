@@ -41,7 +41,7 @@ class Population():
 			# Assign values from state
 			self.population, self.reproduction = state
 
-	def run(self,task,goal,generations=None,report=False,X=None,Y=None,substrate=None,plot_file=None,plot_settings={}):
+	def run(self,task,goal,generations=None,report=False,X=None,Y=None,substrate=None):
 		'''
 		Run evolution on a given task for a number of generations or until
 		a goal is reached.
@@ -54,6 +54,7 @@ class Population():
 		reached_goal = False
 		# Plot data
 		best_fitnesses = []
+		avg_fitnesses  = []
 		max_complexity = []
 		min_complexity = []
 		avg_complexity = []
@@ -67,6 +68,8 @@ class Population():
 			avg_complexities = 0
 			for genome in itervalues(self.population):
 				avg_complexities += genome.complexity()
+				avg_fitnesses += genome.fitness
+
 				# Update generation's most fit
 				if curr_best is None or genome.fitness > curr_best.fitness:
 					curr_best = genome
@@ -96,6 +99,7 @@ class Population():
 				report_output(self, X, Y, substrate)
 
 			best_fitnesses.append(self.best_genome.fitness)
+			avg_fitnesses.append((avg_fitnesses+0.0)/len(self.population))
 			max_complexity.append(self.max_complex_genome.complexity())
 			min_complexity.append(self.min_complex_genome.complexity())
 			avg_complexity.append((avg_complexities+0.0)/len(self.population))
@@ -119,8 +123,11 @@ class Population():
 			self.species.speciate(self.population, self.current_gen)
 			self.current_gen += 1
 
-		if plot_file is not None:
-			generations = list(range(self.current_gen))
-			plot_fitness(generations, best_fitnesses, plot_file, plot_settings)
-
-		return self.best_genome
+		return {
+			'best_gen': self.best_genome,
+			'best_fit': best_fitnesses,
+			'avg_fit':  avg_fitnesses,
+			'min_comp': min_complexity,
+			'max_comp': max_complexity,
+			'avg_comp': avg_complexity
+		}
