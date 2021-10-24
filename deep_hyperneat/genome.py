@@ -13,24 +13,47 @@ from copy import deepcopy
 from deep_hyperneat.phenomes import creates_cycle
 
 # Mutation probabilities
-node_add_prob = 0.2
-node_delete_prob = 0.2
-conn_add_prob = 0.5
-conn_delete_prob = 0.5
-weight_mutation_rate = 0.9
-weight_mutation_power = 0.1
-inc_depth_prob = 0.1
-inc_breadth_prob = 0.1
+# node_add_prob = 0.2
+# node_delete_prob = 0.2
+# conn_add_prob = 0.5
+# conn_delete_prob = 0.5
+# weight_mutation_rate = 0.9
+# weight_mutation_power = 0.1
+# inc_depth_prob = 0.1
+# inc_breadth_prob = 0.1
+
+class GenomeConfig():
+
+	def __init__(self,
+		node_add_prob         = 0.2,
+		node_delete_prob      = 0.2,
+		conn_add_prob         = 0.5,
+		conn_delete_prob      = 0.5,
+		weight_mutation_rate  = 0.9,
+		weight_mutation_power = 0.1,
+		inc_depth_prob        = 0.1,
+		inc_breadth_prob      = 0.1
+	):
+		self.node_add_prob         = node_add_prob
+		self.node_delete_prob      = node_delete_prob
+		self.conn_add_prob         = conn_add_prob
+		self.conn_delete_prob      = conn_delete_prob
+		self.weight_mutation_rate  = weight_mutation_rate
+		self.weight_mutation_power = weight_mutation_power
+		self.inc_depth_prob        = inc_depth_prob
+		self.inc_breadth_prob      = inc_breadth_prob
 
 class Genome():
 
-	def __init__(self, key):
+	def __init__(self, key, config):
 		'''
 		Base class for the CPPN genome.
 
 		key -- genome key
+		confg -- configuration for this genome
 		'''
 		self.key = key
+		self.config = config
 		self.node_indexer = None
 		# Nodes and connections
 		self.connections = {}
@@ -102,7 +125,7 @@ class Genome():
 			self.nodes[node_to_add.key] = node_to_add
 		# Connections
 		for conn_copy in genome.connections.values():
-			conn_to_add = ConnectionGene(conn_copy.key, conn_copy.weight)
+			conn_to_add = ConnectionGene(conn_copy.key, conn_copy.weight, self.config)
 			self.connections[conn_to_add.key] = conn_to_add
 
 	def create_connection(self, source_key, target_key, weight=None):
@@ -117,7 +140,7 @@ class Genome():
 			weight = np.random.uniform(-1,1)
 		else:
 			weight = weight
-		new_conn = ConnectionGene((source_key,target_key), weight)
+		new_conn = ConnectionGene((source_key,target_key), weight, self.config)
 		self.connections[new_conn.key] = new_conn
 		return new_conn
 
@@ -146,6 +169,13 @@ class Genome():
 		single_struct -- optional flag for only allowing one topological
 						 mutation to occur per generation
 		'''
+		node_add_prob         = self.config.node_add_prob
+		node_delete_prob      = self.config.node_delete_prob
+		conn_add_prob         = self.config.conn_add_prob
+		conn_delete_prob      = self.config.conn_delete_prob
+		inc_depth_prob        = self.config.inc_depth_prob
+		inc_breadth_prob      = self.config.inc_breadth_prob
+
 		if single_struct:
 			d = max(1, (node_add_prob + node_delete_prob +
 						conn_add_prob + conn_delete_prob +
@@ -494,7 +524,7 @@ class NodeGene():
 
 class ConnectionGene():
 
-	def __init__(self,key,weight):
+	def __init__(self,key,weight,config):
 		'''
 		Base class for CPPN connection genes.
 
@@ -503,9 +533,13 @@ class ConnectionGene():
 		'''
 		self.key = key
 		self.weight = weight
+		self.config = config
 		self.enabled = True
 
 	def mutate(self,g,gen=None):
+		weight_mutation_rate  = self.config.weight_mutation_rate
+		weight_mutation_power = self.config.weight_mutation_power
+
 		# Mutate attributes of connection gene
 		if np.random.uniform() < weight_mutation_rate:
 			delta = np.random.uniform(-1*weight_mutation_power,weight_mutation_power)

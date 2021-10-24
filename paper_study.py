@@ -48,7 +48,8 @@ def xor(genomes):
 for _ in range(100):
 	# Run task and gather winning genome
 	pop = Population(population_key, population_size, population_elitism)
-	champion = pop.run(xor,fitness_goal,num_generations)
+	results = pop.run(xor,fitness_goal,num_generations,report=True)
+	champion = results['best_gen']
 	champ_fitness.append((champion.num_depth, champion.num_breadth))
 	pop_gens.append(pop.current_gen)
 	# Print to user

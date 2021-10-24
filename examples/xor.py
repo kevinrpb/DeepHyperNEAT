@@ -2,7 +2,8 @@ from deep_hyperneat.genome import Genome
 from deep_hyperneat.population import Population
 from deep_hyperneat.phenomes import FeedForwardCPPN as CPPN
 from deep_hyperneat.decode import decode
-from deep_hyperneat.visualize import draw_net, plot_fitness
+from deep_hyperneat.visualize import draw_net
+from deep_hyperneat.reporters import plot_fitness
 
 # Substrate parameters
 sub_in_dims = [1,2]

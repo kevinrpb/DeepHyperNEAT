@@ -6,6 +6,8 @@ Largely copied from neat-python. (Copyright 2015-2017, CodeReclaimers, LLC.)
 
 import graphviz
 import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
 try:
    import cPickle as pickle
 except:
@@ -94,3 +96,47 @@ def draw_net(net, filename=None):
     dot.render(filename)
 
     return dot
+
+def plot_series(df, columns, labels=None, settings={}):
+    # Get default settings and update with those received
+    _settings = {
+        'title': None,
+        'ylim': None,
+        'xlabel': 'x',
+        'ylabel': 'y',
+        'dashes': False,
+        'markers': False,
+        'filename': None
+    }
+    _settings.update(settings)
+
+    # If we get no specific columns, get all from daraframe
+    if columns is None:
+        columns = df.columns
+
+    # If we get no extra labels, set as the columns by default
+    if labels is None:
+        labels = columns
+
+    # Construct new dataframe with selected columns and labels
+    _df = pd.DataFrame()
+    for key, label in zip(columns, labels):
+        _df[label] = df[key]
+
+    # Create plot
+    sns.lineplot(data=_df, dashes=_settings['dashes'], markers=_settings['markers'])
+
+    # Update title and axes
+    plt.title(_settings['title'])
+    plt.ylabel(_settings['ylabel'])
+    plt.xlabel(_settings['xlabel'])
+
+    plt.ylim(_settings['ylim'])
+
+    plt.tight_layout()
+
+    # Save the figure and flush to ensure next figure is 'reset'
+    if _settings['filename'] is not None:
+        plt.savefig(_settings['filename'])
+
+    plt.clf()

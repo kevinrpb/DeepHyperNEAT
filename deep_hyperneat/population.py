@@ -8,11 +8,11 @@ from deep_hyperneat.genome import Genome
 from deep_hyperneat.reproduction import Reproduction
 from deep_hyperneat.util import iteritems,itervalues
 from deep_hyperneat.species import SpeciesSet
-from deep_hyperneat.reporters import report_fitness, report_species, plot_fitness, report_output
+from deep_hyperneat.reporters import report_fitness, report_species, report_output
 
 class Population():
 
-	def __init__(self, key, size, elitism=1, state=None):
+	def __init__(self, key, size, elitism=1, state=None, genome_config=None):
 		'''
 		Class for populations.
 
@@ -30,7 +30,7 @@ class Population():
 		self.last_best = 0
 		self.current_gen = 0
 		self.elitism = elitism
-		self.reproduction = Reproduction()
+		self.reproduction = Reproduction(genome_config)
 		self.species = SpeciesSet(3.5)
 
 		if state == None:

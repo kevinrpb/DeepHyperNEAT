@@ -5,14 +5,19 @@ Largely copied from neat-python. (Copyright 2015-2017, CodeReclaimers, LLC.)
 '''
 import random
 from math import ceil
-from deep_hyperneat.genome import Genome
+from deep_hyperneat.genome import Genome, GenomeConfig
 from deep_hyperneat.stagnation import Stagnation
 from itertools import count
 from deep_hyperneat.util import itervalues, iteritems, mean
 
 class Reproduction:
 
-	def __init__(self):
+	def __init__(self, genome_config):
+		if genome_config is None:
+			self.genome_config = GenomeConfig()
+		else:
+			self.genome_config = genome_config
+
 		self.genome_indexer = count(1)
 		self.reporters = None
 		# Number of elites allowed to be cloned into species each gen
@@ -32,7 +37,7 @@ class Reproduction:
 		for i in range(num_genomes):
 			gid = next(self.genome_indexer)
 			# Create genome
-			new_genome = Genome(gid)
+			new_genome = Genome(gid, self.genome_config)
 			new_genomes[gid] = new_genome
 
 		return new_genomes
@@ -165,7 +170,7 @@ class Reproduction:
 				parent1_key, parent1 = random.choice(old_species_members)
 				# parent2_key, parent2 = random.choice(old_species_members)
 				child_key = next(self.genome_indexer)
-				child = Genome(child_key)
+				child = Genome(child_key, self.genome_config)
 				# child.crossover(parent1, parent2)
 				child.copy(parent1,generation)
 				child.mutate(generation)
