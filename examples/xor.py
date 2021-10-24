@@ -2,8 +2,7 @@ from deep_hyperneat.genome import Genome
 from deep_hyperneat.population import Population
 from deep_hyperneat.phenomes import FeedForwardCPPN as CPPN
 from deep_hyperneat.decode import decode
-from deep_hyperneat.visualize import draw_net
-from deep_hyperneat.reporters import plot_fitness
+from deep_hyperneat.visualize import draw_net, plot_series
 
 # Substrate parameters
 sub_in_dims = [1,2]
@@ -50,7 +49,27 @@ substrate = decode(cppn,sub_in_dims,sub_o_dims,sub_sh_dims)
 
 # Plot fitness
 best_fitnesses = results['best_fit']
-plot_fitness(list(range(num_generations)), best_fitnesses, 'reports/fitness_plot.png')
+avg_fitnesses = results['avg_fit']
+plot_series(best_fitnesses, avg_fitnesses,
+	labels   = ['best', 'avg'],
+	settings = {
+		'title': 'Fitness',
+		'xlabel': 'generation',
+		'filename': 'reports/fitness_plot'
+	}
+)
+
+max_complexity = results['max_comp']
+avg_complexity = results['avg_comp']
+min_complexity = results['min_comp']
+plot_series(max_complexity, avg_complexity, min_complexity,
+	labels   = ['max', 'avg', 'min'],
+	settings = {
+		'title': 'Complexity',
+		'xlabel': 'generation',
+		'filename': 'reports/complexity_plot'
+	}
+)
 
 # Visualize networks of CPPN and Substrate. Files are saved in
 # 	reports/champion_images

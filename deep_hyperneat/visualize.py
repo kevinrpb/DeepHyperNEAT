@@ -97,7 +97,7 @@ def draw_net(net, filename=None):
 
     return dot
 
-def plot_series(df, columns, labels=None, settings={}):
+def plot_series(*data, labels=None, settings={}):
     # Get default settings and update with those received
     _settings = {
         'title': None,
@@ -110,21 +110,21 @@ def plot_series(df, columns, labels=None, settings={}):
     }
     _settings.update(settings)
 
-    # If we get no specific columns, get all from daraframe
-    if columns is None:
-        columns = df.columns
+    # Make data a list and flatten if only one series
+    data = list(zip(*data))
 
-    # If we get no extra labels, set as the columns by default
+    # If no labels, make series_N the column names
     if labels is None:
-        labels = columns
+        labels = list(map(lambda i: f'series_{i}', range(0, len(data))))
+    # Allow passing just one string for one series
+    elif isinstance(labels, str):
+        labels = [labels]
 
-    # Construct new dataframe with selected columns and labels
-    _df = pd.DataFrame()
-    for key, label in zip(columns, labels):
-        _df[label] = df[key]
+    # Make the dataframe
+    df = pd.DataFrame(data, columns=labels)
 
     # Create plot
-    sns.lineplot(data=_df, dashes=_settings['dashes'], markers=_settings['markers'])
+    sns.lineplot(data=df, dashes=_settings['dashes'], markers=_settings['markers'])
 
     # Update title and axes
     plt.title(_settings['title'])
