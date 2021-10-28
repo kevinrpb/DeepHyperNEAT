@@ -68,8 +68,11 @@ def draw_net(net, filename=None):
         name = node_names.get(k, str(k))
         outputs.add(name)
 
-        act_func = list(filter(lambda eval: eval[0] == k, net.node_evals))[0][1]
-        act_name = act_set.get_name(act_func)
+        node_evals = list(filter(lambda eval: eval[0] == k, net.node_evals))
+        if len(node_evals) > 0:
+            act_name = act_set.get_name(node_evals[0][1])
+        else:
+            act_name = 'none'
 
         if isinstance(net, FeedForwardCPPN):
             tuple_string = str(net.output_nodes[k][0])+str(net.output_nodes[k][1])
