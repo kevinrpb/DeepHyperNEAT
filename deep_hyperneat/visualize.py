@@ -4,6 +4,8 @@ Functions for drawing substrates and CPPNs using graphviz.
 Largely copied from neat-python. (Copyright 2015-2017, CodeReclaimers, LLC.)
 '''
 
+from deep_hyperneat.activations import ActivationFunctionSet
+from deep_hyperneat.phenomes import FeedForwardCPPN, FeedForwardSubstrate
 import graphviz
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -22,6 +24,7 @@ def draw_net(net, filename=None):
     '''
     # Dictionaries for node names and node colors
     node_names, node_colors = {}, {}
+    act_set = ActivationFunctionSet()
 
     # Dictionary of node attributes for graphviz
     node_attrs = {
@@ -36,53 +39,72 @@ def draw_net(net, filename=None):
     inputs = set()
     # Traverse nodes from net and create them in dot
     for k in net.input_nodes:
-        inputs.add(k)
         name = node_names.get(k, str(k))
+        inputs.add(name)
+
         input_attrs = {'style': 'filled',
                        'shape': 'box',
                        'fillcolor': node_colors.get(k, 'lightgray')}
         dot.node(name, _attributes=input_attrs)
+
     try:
-      # Set of bias nodes from net
-      bias = set()
-      # Traverse bias nodes and create them in visualization (if any)
-      for k in net.bias_node:
-          bias.add(k)
-          name = node_names.get(k, str(k))
-          bias_attrs = {'style': 'filled',
-                         'shape': 'circle',
-                         'fillcolor': node_colors.get(k, 'lightgray')}
-          dot.node(name, _attributes=bias_attrs)
+        # Set of bias nodes from net
+        bias = set()
+        # Traverse bias nodes and create them in visualization (if any)
+        for k in net.bias_node:
+            bias.add(k)
+            name = node_names.get(k, str(k))
+            bias_attrs = {'style': 'filled',
+                           'shape': 'circle',
+                           'fillcolor': node_colors.get(k, 'lightgray')}
+            dot.node(name, _attributes=bias_attrs)
     except:
-      pass
+        pass
 
     # Set of output nodes from net
     outputs = set()
     # Traverse nodes from net and create them in dot
     for k in net.output_nodes:
-        outputs.add(k)
         name = node_names.get(k, str(k))
-        try:
+        outputs.add(name)
+
+        act_func = list(filter(lambda eval: eval[0] == k, net.node_evals))[0][1]
+        act_name = act_set.get_name(act_func)
+
+        if isinstance(net, FeedForwardCPPN):
             tuple_string = str(net.output_nodes[k][0])+str(net.output_nodes[k][1])
-            node_attrs = {'style': 'filled',
-                          'label': str(k)+"\n"+tuple_string,
-                          'fillcolor': node_colors.get(k, 'lightblue'),
-                          # 'shape': 'square',
-                          'fontsize':'7',
-                          'height': '0.45',
-                          'width': '0.45',
-                          'fixedsize': 'true'}
-        except:
-            node_attrs = {'style': 'filled',
-                          # 'xlabel': str(net.output_nodes[k]),
-                          'fillcolor': node_colors.get(k, 'lightblue')}
+            label = f'{k}\n{tuple_string}\n{act_name}'
+        elif isinstance(net, FeedForwardSubstrate):
+            label = f'{k}\n{act_name}'
+
+        node_attrs = {'style': 'filled',
+                        'label': label,
+                        'fillcolor': node_colors.get(k, 'lightblue'),
+                        'fontsize':'5',
+                        'height': '0.45',
+                        'width': '0.45',
+                        'fixedsize': 'true'}
         dot.node(name, _attributes=node_attrs)
 
     for node, act_func, agg_func, links in net.node_evals:
         for i, w in links:
             input, output = node, int(i)
+
             a = node_names.get(output, str(output))
             b = node_names.get(input, str(input))
+
+            if b not in outputs and b not in inputs:
+                act_name = act_set.get_name(act_func)
+
+                node_attrs = {'style': 'filled',
+                                'label': f'{b}\n{act_name}',
+                                'fillcolor': node_colors.get(k, 'white'),
+                                'fontsize':'5',
+                                'height': '0.45',
+                                'width': '0.45',
+                                'fixedsize': 'true'}
+                dot.node(b, _attributes=node_attrs)
+
             style = 'solid'
             if w > 0.0:
                 color = 'green'

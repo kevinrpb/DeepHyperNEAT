@@ -93,3 +93,12 @@ class ActivationFunctionSet(object):
         if f is None:
             raise InvalidActivationFunction("No such activation function: {0!r}".format(name))
         return f
+
+    def get_name(self, function):
+        for k in self.functions.keys():
+            f = self.functions[k]
+            
+            if f.__code__.co_code == function.__code__.co_code:
+                return k
+
+        return None
